@@ -1,5 +1,6 @@
 from hashlib import new
 import praw
+from tqdm import tqdm
 
 reddit = praw.Reddit(
     client_id = 'vBOKe5A5jSjLe-i2iCKjww',
@@ -16,16 +17,29 @@ class RedditorInformation:
 
 
     def get_submissions(self, nsfw_filter=False):
-        count = 0
-        for submission in self.redditor.submissions.top(time_filter='all', limit=None):
-            print(submission.title + ' : ' +  submission.url)
-            # if hasattr(submission, 'media_metadata'):
-            #     image_dict = submission.media_metadata
-            #     for image_item in image_dict.values():
-            #         largest_image = image_item['s']
-            #         image_url = largest_image['u']
-            #         print(image_url)
+        print('Started Fetching...')
+        urls = []
+        all_submissions = list(self.redditor.submissions.top(time_filter='all', limit=None))
+		
+		# Iterating through all the submissions
+        for submission in tqdm(all_submissions, total=len(all_submissions)):
 
+			# If the post is as image
+            imgs = ['imgur.com', '.png', '.jpg', '.jpeg']
+            if any(img in submission.url for img in imgs):
+                urls.append(submission.url)
+#                print(submission.url)
+
+            # If the post is as gallery
+            elif 'gallery' in submission.url:
+                tmp = reddit.submission(url = submission.url)
+                image_dict = tmp.media_metadata
+                for image_item in image_dict.values():
+                    largest_image = image_item['s']
+                    image_url = image_item['s']['u']
+                    urls.append(image_url)
+#                    print(submission.url)
+        print(urls)
 
     def get_submissions_from_subreddit(self, subreddit):
         pass
