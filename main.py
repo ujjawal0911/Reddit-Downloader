@@ -20,8 +20,12 @@ class SubRedditObject:
     def __init__(self, subreddit_name):
         self.subreddit = reddit.subreddit(subreddit_name)
 
-    def download_top_posts():
-        pass
+    def download_top_posts(self, limit=None, time_filter='all'):
+        submissions_list = list(self.subreddit.top(limit=limit, time_filter=time_filter))
+        urls = get_submissions_urls(submissions_list)
+        filename = '{}.zip'.format(self.subreddit.name)
+        download_all_images(urls, filename)
+        print("/nDownload Successful")
 
 
 if __name__ == '__main__':
@@ -39,6 +43,15 @@ if __name__ == '__main__':
         redditor.download_posts()
 
     elif inp == 2:
+        subreddit_name = input("Enter the name of the Subreddit: ")
+        subreddit = None
+
+        try:
+            subreddit = SubRedditObject(subreddit_name)
+        except:
+            raise Exception("Invalid Subreddit Name")
+
+        subreddit.download_top_posts(limit=100)
         pass
     else:
         raise Exception("Invalid Option Provided.")
