@@ -64,6 +64,7 @@ class Sort_By(str, Enum):
 def main(redditor: List[str] = typer.Option(None, help="Username of the Redditor"),
          subreddit: List[str] = typer.Option(None, help="Name of the Subreddit"),
          sort_by: Sort_By = typer.Option(Sort_By.top, help="Parameter by how to get the posts from hot, new or top")):
+         limit: int = typer.Option(None, help="The amount of posts to download.")):
 
     if len(redditor) == 0 and len(subreddit) == 0:
         raise Exception("Either redditor or subreddit required. --help to get help.")
@@ -79,20 +80,7 @@ def main(redditor: List[str] = typer.Option(None, help="Username of the Redditor
             tmp.download_posts(sort_by)
 
 
-
 if __name__ == '__main__':
    typer.run(main) 
 
 
-# if __name__ == '__main__':
-#         try:
-#             redditor = RedditorObject(username)
-#         except:
-#             raise Exception("No such user")
-
-#         redditor.download_posts()
-#             subreddit = SubRedditObject(subreddit_name)
-#             raise Exception("Invalid Subreddit Name")
-
-#         subreddit.download_top_posts(limit=100)
-#         pass
